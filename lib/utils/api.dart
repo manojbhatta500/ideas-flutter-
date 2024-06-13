@@ -1,5 +1,5 @@
 class Apis {
-  static String baseUrl = 'http://localhost:3000/';
-  static String logIn = '$baseUrl/login';
+  static String baseUrl = 'http://localhost:8080';
+  static String logIn = '$baseUrl/user/login';
   static String signIn = '$baseUrl/signup';
 }

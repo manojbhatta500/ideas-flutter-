@@ -13,6 +13,18 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+
+  bool showPassword = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    usernameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         body: Column(
           children: [
             SizedBox(
-              height: 0.4 * height,
+              height: 0.3 * height,
               child: Lottie.asset(
                 'assets/signup.json',
               ),
@@ -60,8 +72,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(
                           height: 10,
                         ),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Username")),
                         SizedBox(
-                          height: 10,
+                          height: 5,
+                        ),
+                        TextField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            hintText: 'username',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                         ),
                         Align(
                             alignment: Alignment.centerLeft,
@@ -78,8 +102,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                         ),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Password")),
                         SizedBox(
-                          height: 30,
+                          height: 5,
+                        ),
+                        TextField(
+                          controller: passwordController,
+                          obscureText: !showPassword,
+                          decoration: InputDecoration(
+                            hintText: 'password',
+                            suffixIcon: IconButton(
+                              icon: Icon(showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                showPassword = !showPassword;
+                                (context as Element).markNeedsBuild();
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         GestureDetector(
                           onTap: () {
@@ -109,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

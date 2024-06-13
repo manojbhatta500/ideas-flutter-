@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:notes/bloc/login/login_bloc.dart';
 import 'package:notes/screens/homepage.dart';
 import 'package:notes/screens/notespage.dart';
 import 'package:notes/screens/register.dart';
@@ -91,16 +95,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: passwordController,
                           obscureText: !showPassword,
                           decoration: InputDecoration(
-                            hintText: 'Enter your password',
+                            hintText: 'password',
                             suffixIcon: IconButton(
                               icon: Icon(showPassword
                                   ? Icons.visibility
                                   : Icons.visibility_off),
                               onPressed: () {
                                 showPassword = !showPassword;
-                                // This will rebuild the widget and reflect the changes
-                                // in the visibility of the password
-                                // by toggling the obscureText property
                                 (context as Element).markNeedsBuild();
                               },
                             ),
@@ -119,29 +120,66 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(fontSize: 16, color: Colors.red),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Homepage()));
+                        BlocListener<LoginBloc, LoginState>(
+                          listener: (context, state) {
+                            if (state is LoginSuccess) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Homepage()));
+                            } else if (State is LoginInitial) {
+                              log('this is initial state');
+                            } else if (state is Loginloading) {
+                              log('this is loading  state');
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('sorry Try again')));
+                              log('this is else  state');
+                            }
                           },
-                          child: Container(
-                            height: 40,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            decoration: BoxDecoration(
-                                color: Color(0XFFFC9C2C),
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomRight: Radius.circular(10))),
-                            child: Center(
-                              child: Text(
-                                'Login',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: 1.5,
-                                    fontSize: 15),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (emailController.text.isNotEmpty &&
+                                  passwordController.text.isNotEmpty) {
+                                if (passwordController.text.length > 5) {
+                                  BlocProvider.of<LoginBloc>(context).add(
+                                      Userlogin(
+                                          email: emailController.text,
+                                          password: passwordController.text));
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          backgroundColor: Colors.red,
+                                          content:
+                                              Text('password length must 6')));
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content:
+                                            Text('Both feilds are required.')));
+                              }
+                            },
+                            child: Container(
+                              height: 40,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Color(0XFFFC9C2C),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomRight: Radius.circular(10))),
+                              child: Center(
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: 1.5,
+                                      fontSize: 15),
+                                ),
                               ),
                             ),
                           ),
