@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:notes/models/all_notes_model.dart';
+
 class NoteDetail extends StatefulWidget {
-  NoteDetail({super.key});
+  final Notes notes;
+  NoteDetail({super.key, required this.notes});
 
   @override
   State<NoteDetail> createState() => _NoteDetailState();
@@ -77,7 +80,7 @@ class _NoteDetailState extends State<NoteDetail> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'it dosent matter',
+                            widget.notes.title!,
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 22,
@@ -86,7 +89,7 @@ class _NoteDetailState extends State<NoteDetail> {
                         ),
                         Divider(),
                         Text(
-                          'i will become a great fullstack flutter and node js developer one day just see ',
+                          widget.notes.description!,
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: customSize.toDouble()),
@@ -120,22 +123,29 @@ class _NoteDetailState extends State<NoteDetail> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      border: Border.all(color: Colors.white),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                        bottomRight: Radius.circular(10),
+                  GestureDetector(
+                    onTap: () {
+                      // we will delete it here
+                    },
+                    child: Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        border: Border.all(color: Colors.white),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                          bottomRight: Radius.circular(10),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                      textAlign: TextAlign.center,
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ],

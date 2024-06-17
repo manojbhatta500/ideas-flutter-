@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:notes/bloc/signup/signup_bloc.dart';
 import 'package:notes/screens/homepage.dart';
 import 'package:notes/screens/login.dart';
 import 'package:notes/screens/notespage.dart';
@@ -79,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: 5,
                         ),
                         TextField(
-                          controller: emailController,
+                          controller: usernameController,
                           decoration: InputDecoration(
                             hintText: 'username',
                             border: OutlineInputBorder(
@@ -130,29 +134,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(
                           height: 10,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Homepage()));
+                        BlocListener<SignupBloc, SignupState>(
+                          listener: (context, state) {
+                            if (state is SignupSuccess) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                          'successfully created account.')));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()));
+                            } else if (state is SignupFailed) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                          'something went wrong. try again')));
+                            } else if (state is SignupLoading) {
+                              log('this is signup loading');
+                            } else {
+                              log('this is signup faile probally  else ');
+                            }
                           },
-                          child: Container(
-                            height: 40,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            decoration: BoxDecoration(
-                                color: Color(0XFFFC9C2C),
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomRight: Radius.circular(10))),
-                            child: Center(
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: 1.5,
-                                    fontSize: 15),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (emailController.text.isNotEmpty &&
+                                  usernameController.text.isNotEmpty &&
+                                  passwordController.text.isNotEmpty) {
+                                BlocProvider.of<SignupBloc>(context).add(
+                                    UserSignUp(
+                                        email: emailController.text,
+                                        password: passwordController.text,
+                                        userName: usernameController.text));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content:
+                                            Text('all feilds are required')));
+                              }
+                            },
+                            child: Container(
+                              height: 40,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Color(0XFFFC9C2C),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomRight: Radius.circular(10))),
+                              child: Center(
+                                child: Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: 1.5,
+                                      fontSize: 15),
+                                ),
                               ),
                             ),
                           ),
