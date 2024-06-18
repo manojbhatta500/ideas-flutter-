@@ -28,7 +28,16 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     }
   }
 
-  FutureOr<void> _editNote(EditNote event, Emitter<NotesState> emit) async {}
+  FutureOr<void> _editNote(EditNote event, Emitter<NotesState> emit) async {
+    emit(NotesProcessing());
+    final repoResponse = await manager.editNote(
+        id: event.id, title: event.title, desc: event.desc);
+    if (repoResponse == 1) {
+      emit(EditNotesSuccess());
+    } else {
+      emit(EditNotesFailed());
+    }
+  }
 
   FutureOr<void> _getNotes(GetNotes event, Emitter<NotesState> emit) async {
     emit(NotesProcessing());
@@ -40,6 +49,13 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     });
   }
 
-  FutureOr<void> _deleteNote(
-      DeleteNote event, Emitter<NotesState> emit) async {}
+  FutureOr<void> _deleteNote(DeleteNote event, Emitter<NotesState> emit) async {
+    emit(NotesProcessing());
+    final repoResponse = await manager.deleteNote(id: event.id);
+    if (repoResponse == 1) {
+      emit(DeleteNoteSuccess());
+    } else {
+      emit(DeleteNoteFailed());
+    }
+  }
 }

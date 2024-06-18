@@ -59,6 +59,54 @@ class NotesRepository {
     }
   }
 
-  void editNote() async {}
-  void deleteNote() async {}
+  Future<int> editNote(
+      {required String id, required title, required desc}) async {
+    final url = Uri.parse('${Apis.fetchNotes}/${id}');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Token.token}',
+      },
+      body: json.encode({
+        'title': title,
+        'description': desc,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      log('create notes was success');
+      log(response.body);
+
+      return 1;
+    } else {
+      log('create notes failed request');
+      log(response.body);
+      return 0;
+    }
+  }
+
+  Future<int> deleteNote({required String id}) async {
+    final url = Uri.parse('${Apis.fetchNotes}/${id}');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Token.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      log('create notes was success');
+      log(response.body);
+
+      return 1;
+    } else {
+      log('create notes failed request');
+      log(response.body);
+      return 0;
+    }
+  }
 }

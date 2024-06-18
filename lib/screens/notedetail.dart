@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes/bloc/notes/notes_bloc.dart';
 import 'dart:math';
 
 import 'package:notes/models/all_notes_model.dart';
+import 'package:notes/screens/edit_note_screen.dart';
+import 'package:notes/screens/homepage.dart';
 
 class NoteDetail extends StatefulWidget {
   final Notes notes;
@@ -105,27 +109,13 @@ class _NoteDetailState extends State<NoteDetail> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      border: Border.all(color: Colors.white),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                    child: Text(
-                      'Edit',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
                   GestureDetector(
                     onTap: () {
-                      // we will delete it here
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  EditNoteScreen(note: widget.notes)));
                     },
                     child: Container(
                       margin:
@@ -133,7 +123,7 @@ class _NoteDetailState extends State<NoteDetail> {
                       padding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: Colors.green,
                         border: Border.all(color: Colors.white),
                         borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(20),
@@ -142,9 +132,55 @@ class _NoteDetailState extends State<NoteDetail> {
                         ),
                       ),
                       child: Text(
-                        'Delete',
+                        'Edit',
                         style: TextStyle(color: Colors.white, fontSize: 20),
                         textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  BlocListener<NotesBloc, NotesState>(
+                    listener: (context, state) {
+                      if (state is DeleteNoteSuccess) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.green,
+                            content: Text('successfully deleted.')));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Homepage()));
+                      } else if (state is DeleteNoteFailed) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('try again')));
+                      } else if (state is NotesProcessing) {
+                        print('this is just processing on');
+                      } else {
+                        print('this is just else');
+                      }
+                    },
+                    child: GestureDetector(
+                      onTap: () {
+                        showDeleteConfirmationDialog(
+                            context, widget.notes.sId!);
+                      },
+                      child: Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          border: Border.all(color: Colors.white),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                            bottomRight: Radius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
@@ -156,4 +192,31 @@ class _NoteDetailState extends State<NoteDetail> {
       ),
     );
   }
+}
+
+void showDeleteConfirmationDialog(BuildContext context, String noteId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Delete Note'),
+        content: Text('Do you really want to delete this note?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              BlocProvider.of<NotesBloc>(context).add(DeleteNote(id: noteId));
+              Navigator.of(context).pop();
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
 }
