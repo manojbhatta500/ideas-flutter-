@@ -1,6 +1,6 @@
 class Apis {
   // authentication releted apis
-  static String baseUrl = 'http://localhost:3000';
+  static String baseUrl = 'https://notes-app-yudo.onrender.com';
   static String logIn = '$baseUrl/user/login';
   static String signIn = '$baseUrl/user/signup';
 
