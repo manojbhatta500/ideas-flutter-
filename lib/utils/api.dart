@@ -2,7 +2,7 @@ class Apis {
   // authentication releted apis
   static String baseUrl = 'https://notes-app-yudo.onrender.com';
   static String logIn = '$baseUrl/user/login';
-  static String signIn = '$baseUrl/user/signup';
+  static String signIn = '$baseUrl/user/signUp';
 
   // notes releted apis
   static String createNote = '$baseUrl/note';
